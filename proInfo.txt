@@ -1,0 +1,21 @@
+
+
+
+
+
+
+
+
+
+
+
+03 Authentication Setup
+
+* Integrate Better-Auth
+* Configure auth schema
+* Push changes
+* Create basic UI
+* Create new user
+* Create, review & merge pull request
+
+
