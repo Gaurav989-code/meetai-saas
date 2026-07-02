@@ -18,4 +18,14 @@
 * Create new user
 * Create, review & merge pull request
 
+04 Authentication UICreate
+ Auth pages ✔ 
+ Create Auth layout ✔
+ Create Auth module ✔
+ Create Auth views ✔
+ Register form ✔
+ Login form ✔
+ Get app logo ✔
+ Create, review & merge pull request ✔
 
+ 

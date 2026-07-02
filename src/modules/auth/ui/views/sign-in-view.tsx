@@ -6,9 +6,12 @@ import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
 import { authClient } from "@/lib/auth-client";
 
 import { OctagonAlertIcon } from "lucide-react";
+import { FaGithub, FaGoogle } from "react-icons/fa";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -42,6 +45,7 @@ const formSchema = z.object({
 
 const SignInView = () => {
   const router = useRouter();
+
   const [error, setError] = React.useState<string | null>(null);
   const [pending, setPending] = React.useState(false);
 
@@ -61,6 +65,7 @@ const SignInView = () => {
       {
         email: data.email,
         password: data.password,
+        callbackURL: "/",
       },
       {
         onSuccess: () => {
@@ -74,6 +79,27 @@ const SignInView = () => {
       },
     );
     // console.log(authData.error);
+  };
+
+  const onSocial = (provider: "github" | "google") => {
+    setError(null);
+    setPending(true);
+
+    authClient.signIn.social(
+      {
+        provider: provider,
+        callbackURL: "/",
+      },
+      {
+        onSuccess: () => {
+          setPending(false);
+        },
+        onError: ({ error }) => {
+          setPending(false);
+          setError(error.message);
+        },
+      },
+    );
   };
 
   return (
@@ -181,20 +207,22 @@ const SignInView = () => {
                     className="w-full justify-center gap-6"
                   >
                     <Button
+                      onClick={() => onSocial("google")}
                       disabled={pending}
                       type="button"
                       variant="outline"
                       className="w-1/2"
                     >
-                      Google
+                      <FaGoogle />
                     </Button>
                     <Button
+                      onClick={() => onSocial("github")}
                       disabled={pending}
                       type="button"
                       variant="outline"
                       className="w-1/2"
                     >
-                      Git-Hub
+                      <FaGithub />
                     </Button>
                   </Field>
                   <div className=" text-center text-sm">

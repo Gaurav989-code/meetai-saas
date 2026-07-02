@@ -1,15 +1,20 @@
 "use client";
 
 import * as React from "react";
+import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import * as z from "zod";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
 import { OctagonAlertIcon } from "lucide-react";
+import { FaGithub, FaGoogle } from "react-icons/fa";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
   CardContent,
@@ -25,8 +30,6 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Alert, AlertTitle } from "@/components/ui/alert";
 
 // 1. Updated Schema for Email and Password
 const formSchema = z
@@ -74,6 +77,7 @@ const SignUpView = () => {
         name: data.name,
         email: data.email,
         password: data.password,
+        callbackURL: "/",
       },
       {
         onSuccess: () => {
@@ -87,6 +91,27 @@ const SignUpView = () => {
       },
     );
     // console.log(authData.error);
+  };
+
+  const onSocial = (provider: "github" | "google") => {
+    setError(null);
+    setPending(true);
+
+    authClient.signIn.social(
+      {
+        provider: provider,
+        callbackURL: "/",
+      },
+      {
+        onSuccess: () => {
+          setPending(false);
+        },
+        onError: ({ error }) => {
+          setPending(false);
+          setError(error.message);
+        },
+      },
+    );
   };
 
   return (
@@ -181,7 +206,9 @@ const SignUpView = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="auth-confirmPassword">Confirm Password</FieldLabel>
+                    <FieldLabel htmlFor="auth-confirmPassword">
+                      Confirm Password
+                    </FieldLabel>
                     <Input
                       {...field}
                       id="auth-confirmPassword"
@@ -240,20 +267,22 @@ const SignUpView = () => {
                     className="w-full justify-center gap-6"
                   >
                     <Button
+                      onClick={() => onSocial("google")}
                       disabled={pending}
                       type="button"
                       variant="outline"
                       className="w-1/2"
                     >
-                      Google
+                      <FaGoogle />
                     </Button>
                     <Button
+                      onClick={() => onSocial("github")}
                       disabled={pending}
                       type="button"
                       variant="outline"
                       className="w-1/2"
                     >
-                      Git-Hub
+                      <FaGithub />
                     </Button>
                   </Field>
                   <div className=" text-center text-sm">
